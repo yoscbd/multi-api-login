@@ -1,0 +1,193 @@
+
+        (function($) {
+
+            var TsApiService = {
+
+
+                init: function(settings) {
+
+                    //configurations
+                    this.config = {
+                        loginForm: $('#login-form'),
+                        inputPassword: $('#password'),
+                        InputEmail: $('#email'),
+                        First_ApiUrl: 'http://trading.v8options.com',
+                        Second_ApiUrl: 'http://trading.v8options.eu',
+
+                    };
+
+                    // **Allow overriding the default config with user config**
+                    $.extend(this.config, settings);
+
+                    //**validate the form fields**
+                    this.doInputValidsation();
+
+                },
+
+                doInputValidsation: function() {
+                    //**valiadte email and password (using query.validator plugin)**
+
+                    //console.log(TsApiService.config.loginForm);
+                    this.config.loginForm.validate({
+
+                        submitHandler: function(form) {
+                            //**calling the md5 convertion after validation is done**
+                            //console.log('form validation was done, form is valid');
+                            TsApiService.domd5Conversion();
+                        },
+					
+                        //**validation settings for the jQuery validate plugin**
+                        rules: {
+
+                            password: {
+                                required: true,
+                                minlength: 6
+                            },
+
+                            email: {
+                                required: true,
+                                email: true
+                            },
+
+                        },
+                       // messages: {
+
+                         //   password: {
+                         //       requiered: "Please Enter a Password",
+                         //       minlength: "6 characters min"
+
+                        //    },
+
+                       //     email: "please enter valid email"
+                     //   },
+
+                    });
+                    //console.log('form validation script was running')
+
+
+
+                },
+
+                domd5Conversion: function() {
+                    // **convert password to MD5 using 'forms-validation.js' script**
+                    //console.log('domd5Conversion() was called by submitHandler callbck function');
+                    var md5Pass = md5ConvertionScript.MD5(TsApiService.config.inputPassword.val());
+                    //console.log('md5Pass: ', md5Pass);
+
+                    //**call the url builder with the converterd MD5 password**
+                    this.doUrlBuilding(md5Pass);
+
+
+                },
+
+                doUrlBuilding: function(convertedPassword) {
+                    //**set api url **
+
+                    var FirstApiUrlFull = this.config.First_ApiUrl + '/ajax/index/sign-in?&email=' + this.config.InputEmail.val() + '&password=' + convertedPassword;
+                    console.log('FirstApiUrlFull: ', FirstApiUrlFull);
+
+                    var SecondApiUrlFull = this.config.Second_ApiUrl + '/ajax/index/sign-in?&email=' + this.config.InputEmail.val() + '&password=' + convertedPassword;
+                    console.log('SecondApiUrlFull: ', SecondApiUrlFull);
+
+                    //**call the API login service and pass both API url's**
+                    this.doApiLogin(FirstApiUrlFull, SecondApiUrlFull, convertedPassword);
+
+                },
+
+
+
+                // ** perform login to the API**
+                doApiLogin: function(FirstUrl, SecondUrl,convertedPassword) {
+
+                    $.ajax({
+                        type: 'GET',
+                        url: FirstUrl,
+
+                        success: function(data) {
+                            //console.log('login was done to first API, you can redirect the user');
+                            data = $.parseJSON(data);
+                            //console.log('success message: ', data.success);
+                            if (!data.success) {
+                                alert('first API login failed, please check your user name and password');
+                                TsApiService.doSecondApiLogin(SecondUrl,convertedPassword);
+                            } else if (data.success) {
+                                //**trigger successed login redirection** 
+                                window.location.replace('http://'+ 'trading.v8options' +'.com/index/sign-in?email='+ TsApiService.config.InputEmail.val() +'&password=' + convertedPassword );
+                            }
+
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+
+                            console.log(errorThrown);
+                            alert('problem with api conection for first API');
+
+
+                            //A3**trigger second login with second api url
+                            
+                        }
+
+                    });
+                },
+
+                doSecondApiLogin: function(SecondUrl,convertedPassword) {
+
+                    $.ajax({
+                        type: 'GET',
+                        url: SecondUrl,
+                        //dataType: 'json',
+
+                        success: function(data) {
+                            //console.log('login was done to the second API - you can redirect the user');
+                            data = $.parseJSON(data);
+                            //console.log('success message: ', data);
+                            if (!data.success) {
+                                alert('second API login failed, please check your user name and password');
+                             } else if (data.success) {
+                                //**trigger successed login redirection** 
+                                window.location.replace('http://'+ 'trading.v8options' +'.com/index/sign-in?email='+ TsApiService.config.InputEmail.val() +'&password=' + convertedPassword );
+                            }
+
+
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+
+                            console.log(errorThrown);
+                            alert('problem with api conection for second API');
+
+                            //A3** trow error to the user
+
+                        }
+
+                    });
+                },
+
+
+            }
+
+
+
+
+            $(document).ready(function() {
+
+                //call the login API service with default settings
+                TsApiService.init();
+
+                //or call the login API service with your own settings:
+                // TsApiService.init({
+                // 		First_ApiUrl: 'http://trading.binaryblaze.com',
+                // 		Second_ApiUrl: 'http://trading.binaryblaze.eu',});
+                // });
+
+
+                $(function(){
+                    $.getJSON('http://geoip.tradesmarter.com/json?callback=?').done(function(data){
+                        var countryCode = data.country.toLowerCase();
+                        console.log(countryCode);
+                        $("#country").append(countryCode);
+                    });
+                });
+
+            });
+
+
+        })(jQuery);
