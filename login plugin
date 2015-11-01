@@ -11,8 +11,8 @@
                         loginForm: $('#login-form'),
                         inputPassword: $('#password'),
                         InputEmail: $('#email'),
-                        First_ApiUrl: 'http://trading.v8options.com',
-                        Second_ApiUrl: 'http://trading.v8options.eu',
+                        First_ApiUrl: 'http://trading.brand-domain.com',
+                        Second_ApiUrl: 'http://trading.brand-domain.eu',
 
                     };
 
@@ -112,7 +112,7 @@
                                 TsApiService.doSecondApiLogin(SecondUrl,convertedPassword);
                             } else if (data.success) {
                                 //**trigger successed login redirection** 
-                                window.location.replace('http://'+ 'trading.v8options' +'.com/index/sign-in?email='+ TsApiService.config.InputEmail.val() +'&password=' + convertedPassword );
+                                window.location.replace('http://'+ 'trading.brand-domain' +'.com/index/sign-in?email='+ TsApiService.config.InputEmail.val() +'&password=' + convertedPassword );
                             }
 
                         },
@@ -144,7 +144,7 @@
                                 alert('second API login failed, please check your user name and password');
                              } else if (data.success) {
                                 //**trigger successed login redirection** 
-                                window.location.replace('http://'+ 'trading.v8options' +'.com/index/sign-in?email='+ TsApiService.config.InputEmail.val() +'&password=' + convertedPassword );
+                                window.location.replace('http://'+ 'trading.brand-domain' +'.com/index/sign-in?email='+ TsApiService.config.InputEmail.val() +'&password=' + convertedPassword );
                             }
 
 
