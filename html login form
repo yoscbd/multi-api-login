@@ -1,0 +1,17 @@
+<div class="ts-login-box">
+    <form class="login-form" method="post" role="form" onsubmit="" novalidate="novalidate">
+        <div class=" col-md-4 form-group">
+            <label for="email">Email:</label>
+            <input autocomplete="off" type="email" name="email" class="form-control" id="email" required="" aria-required="true">
+        </div>
+        <div class="col-md-4 form-group">
+            <label for="pwd">Password:</label>
+            <input autocomplete="off" type="password" name="password" class="form-control" id="password" required="" aria-required="true">
+        </div>
+        <div class="btn-wrapper col-md-4">
+            <button type="submit" id="loginButton" class=" btn ts-button">Log-In</button>
+            <a class="forgot-pas-link" href="http://www.brand-domain.eu/forgot-password">Forgot Your Password?</a>
+
+        </div>
+    </form>
+</div>
